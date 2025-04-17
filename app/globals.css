@@ -30,6 +30,7 @@ body {
     .my-special {
         background-color: var(--my-color);
         box-shadow: #100c0c;
+
     }
   }
 }
