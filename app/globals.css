@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 :root {
-  --background: #ffffff;
+  --background: #d79237;
   --foreground: #171717;
   --my-color:rgb(255, 255, 255);
 
