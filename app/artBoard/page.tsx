@@ -166,9 +166,9 @@ export default function ArtBoard() {
         e.stopPropagation();
         const rect = e.currentTarget.getBoundingClientRect();
         console.log(rect);
-        const offsetX = e.clientX - rect.left - 35 ;
+        const offsetX = e.clientX - rect.left - rect.width ;
         console.log(offsetX);
-        const offsetY = e.clientY - rect.top + 180;
+        const offsetY = e.clientY - rect.top - rect.bottom ;
         console.log(offsetY)
 
         setDraggingIndex(index);
@@ -190,7 +190,7 @@ export default function ArtBoard() {
                 const updated = [...prev];
                 updated[draggingIndex] = {
                     ...updated[draggingIndex],
-                    x: e.clientX - dragOffset.x  ,
+                    x: e.clientX - dragOffset.x + 900 ,
                     y: e.clientY - dragOffset.y ,
                 };
                 return updated;
