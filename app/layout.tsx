@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Boruil",
   description: "Grids interactive media",
   icons: {
-        icon: '/favicon.ico', // of '/favicon.png', afhankelijk van je bestand
+        icon: '/favicon.png', // of '/favicon.png', afhankelijk van je bestand
     },
 };
 
@@ -35,8 +35,8 @@ export default function RootLayout({
             <meta property="og:description" content="Grid interactive media" />
             <meta property="og:type" content="website" />
             <meta property="og:url" content="https://boruil.vercel.app" />
-            <link rel="icon" href="/favicon.ico"/>
-            <link rel="icon" href="/favicon.ico"/>
+      
+            <link rel="icon" href="/favicon.png"/>
             <meta property="scrollBehavior" content="smooth"/>
 
         </head>
