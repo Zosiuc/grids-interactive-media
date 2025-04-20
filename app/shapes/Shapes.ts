@@ -25,6 +25,23 @@ export const componentMap: Record<string, SVGComponent> = {
     Trapezium:Trapezium,
     Ster:Ster
 };
+
+export const shapeOptions: {
+    id: number;
+    componentKey: string;
+}[] = [
+    {id: 235, componentKey: "Asset2"},
+    {id: 131, componentKey: "Asset3"},
+    {id: 546, componentKey: "HalfCircle"},
+    {id: 657, componentKey: "Circle"},
+    {id: 676, componentKey: "Vierkant"},
+    {id: 621, componentKey: "Driehoek"},
+    {id: 778, componentKey: "Ruitvorm"},
+    {id: 812, componentKey: "HalveCirkelOnderkant"},
+    {id: 998, componentKey: "Trapezium"},
+    {id: 104, componentKey: "Ster"}
+
+];
 /*
 export {
     Asset2,

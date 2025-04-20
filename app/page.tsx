@@ -42,7 +42,7 @@ export default function Home() {
             <Link
                 href="./artBoard"
                 onClick={() => {hendelNew()}}
-                className="absolute mt-70 border w-80 text-center font-semibold p-6 bg-white text-gray-900 z-20 hover:bg-blue-400 hover:scale-105 transport duration-900"
+                className="absolute mt-70 border w-80 text-center rounded-full font-semibold p-6 bg-white text-gray-900 z-20 hover:bg-blue-400 hover:scale-105 transport duration-900"
             >New Board</Link>
                 {hasCanvas && (
                     <Link

@@ -26,6 +26,24 @@
     --my-color:rgb(255, 255, 255);
   }
 }
+@media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-section,
+  #print-section * {
+    visibility: visible;
+  }
+
+  #print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
 
 body {
   background: var(--background);
