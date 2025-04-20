@@ -161,7 +161,7 @@ export default function ArtBoard() {
             return;
         }
 
-        const html2pdf = (await import('html2pdf.js')) as any;
+        const html2pdf = (await import('html2pdf.js')) ;
 
         const opt = {
             margin:       0,
