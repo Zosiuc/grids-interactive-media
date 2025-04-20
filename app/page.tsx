@@ -47,7 +47,7 @@ export default function Home() {
                 {hasCanvas && (
                     <Link
                         href="./artBoard"
-                        className="absolute mt-90 w-70 text-center border p-6 bg-white text-gray-800 z-20 hover:bg-blue-400  hover:scale-105 transport duration-900"
+                        className="absolute mt-90 w-70 text-center rounded-full border p-6 bg-white text-gray-800 z-20 hover:bg-blue-400  hover:scale-105 transport duration-900"
                     >Resume</Link>
                 )}
 
