@@ -249,40 +249,40 @@ export default function ArtBoard() {
 
 
     return (
-        <main className="flex justify-center flex-wrap p-6 m-20 gap-20 w-full">
+        <main className="main-page">
 
             <nav
-                className="fixed top-2 w-full left-0 flex justify-center p-2  gap-2 z-200 rounded-md my-special shadow-lg">
+                className="navigation-bar">
                 <div
-                    className="flex flex-wrap flex-col  gap-2 justify-center items-center rounded-lg bg-amber-200 p-2 px-6 shadow-md hover:shadow-lg">
-                    <label className={'text-xs font-semibold'}>Tools</label>
+                    className="tools-section">
+                    <label className={'tools-title'}>Tools</label>
                     <div
-                        className={'flex flex-wrap flex-row min-w-20 gap-2'}>
+                        className={'tools-container'}>
 
                         <button
-                            className="flex text-sm items-center cursor-pointer hover:scale-108 hover:bg-gray-300 rounded-full p-2 h-8  hover:opacity-25"
+                            className="tools-button"
                             type="button"
                             onClick={() => redirect(".")}>
                             <Image src={homeIcon} alt={"home"} width={20} height={20}/>
                         </button>
                         <button
-                            className="print-button flex text-sm items-center cursor-pointer hover:scale-108 hover:bg-gray-300 rounded-full p-2 h-8  hover:opacity-25"
+                            className="tools-button"
                             type="button" onClick={handleDownloadPDF}>
                             <Image src={exportPdf} alt={"print"} width={20} height={20}/>
                         </button>
                         <button
-                            className="print-button flex text-sm items-center cursor-pointer hover:scale-108 hover:bg-gray-300 rounded-full p-2 h-8  hover:opacity-25"
+                            className="tools-button print-button"
                             type="button" onClick={handlePrint}>
                             <Image src={printIcon} alt={"print"} width={20} height={20}/>
                         </button>
                         <button
-                            className="flex text-sm items-center cursor-pointer hover:scale-108 hover:bg-gray-300 rounded-full p-2 h-8  hover:opacity-25"
+                            className="tools-button"
                             type="button"
                             onClick={handleClearAll}>
                             <Image src={resetIcon} alt={"reset"} width={20} height={20}/>
                         </button>
                         <button
-                            className="flex text-sm items-center cursor-pointer hover:scale-108 hover:bg-gray-300 rounded-full p-2 h-8  hover:opacity-25"
+                            className="tools-button"
                             type="button"
                             onClick={handleUnset}>
                             <Image src={terugIcon} alt={"unset"} width={20} height={20}/>
@@ -291,12 +291,12 @@ export default function ArtBoard() {
                 </div>
 
                 <div
-                    className="flex flex-wrap flex-row gap-5 justify-center items-center rounded-lg bg-amber-200 p-2 px-6 shadow-md hover:shadow-lg">
+                    className="drawing-tools">
                     <section
-                        className={"flex flex-row gap-3 w-full"}>
-                        <div className={"flex flex-col bg-amber-100 p-2  rounded-md shadow-lg"}>
-                            <label className={'text-xs font-semibold'}>Shape</label>
-                            <div className={'flex flex-wrap flex-row w-full gap-2'}>
+                        className={"shape-selection"}>
+                        <div className={"shape-container"}>
+                            <label className={'shape-title'}>Shape</label>
+                            <div className={'shape-items'}>
                                 {shapeOptions.map((option, index) => {
                                     const ShapeComponent = componentMap[option.componentKey];
                                     return (
@@ -313,17 +313,16 @@ export default function ArtBoard() {
                                                 key={index}
                                                 style={{fill: selectedColor, color: selectedColor}}
                                             >
-                                                <ShapeComponent width={20} height={20}/>
+                                                <ShapeComponent width={40} height={40}/>
                                             </div>
                                         </label>
                                     )
                                 })}
                             </div>
                         </div>
-                        <div className={"flex flex-col bg-amber-100 p-2  rounded-md shadow-lg"}>
-                            <label className={'text-xs font-semibold'}>Draw</label>
-                            <div className={" "}>
-                                <div className={'flex flex-wrap flex-row w-full gap-2'}>
+                        <div className={"draw-container"}>
+                            <label className={'draw-title'}>Draw</label>
+                                <div className={'draw-items'}>
                                     {drawOptions.map((option, index) => {
                                         return (
                                             <label key={option.id}
@@ -344,12 +343,10 @@ export default function ArtBoard() {
                                         )
                                     })}
                                 </div>
-                            </div>
                         </div>
                     </section>
-
-                    <section className={"flex flex-row gap-12 w-full"}>
-                        <div className="flex  gap-2 h-4 items-center">
+                    <section className={"editor"}>
+                        <div className="size-container">
                             <input
                                 type="range"
                                 min={20}
@@ -360,22 +357,25 @@ export default function ArtBoard() {
                                     setSelectedSize(Number(e.target.value));
                                 }
                                 }
-                                className="w-32"
+                                className="size-range"
                             />
                             <span className="text-sm">{selectedSize}px</span>
                         </div>
-                        <div className="flex gap-3 h-4 items-center">
-                            {colorOptions.map((color) => (
-                                <button
-                                    key={color}
-                                    className="w-6 h-6 rounded-full border-2"
-                                    style={{
-                                        backgroundColor: color,
-                                        borderColor: selectedColor === color ? 'black' : 'transparent'
-                                    }}
-                                    onClick={() => setSelectedColor(color)}
-                                />
-                            ))}
+                        <div className="colors-container">
+                            <div className="colors">
+                                {colorOptions.map((color) => (
+                                    
+                                    <button
+                                        key={color}
+                                        className="color-button"
+                                        style={{
+                                            backgroundColor: color,
+                                            borderColor: selectedColor === color ? 'black' : 'transparent'
+                                        }}
+                                        onClick={() => setSelectedColor(color)}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </section>
 
@@ -383,7 +383,7 @@ export default function ArtBoard() {
 
             </nav>
 
-            <section className="flex flex-col gap-2 mt-30 justify-center items-center rounded-md shadow-lg">
+            <section className="artboard">
 
                 <div id={"print-section"} className="page relative w-[794px] h-[1123px] bg-white overflow-clip rounded-md shadow-lg"
                      onClick={handleAddShape}>
