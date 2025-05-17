@@ -15,6 +15,7 @@ import colorsIcon from "app/assets/icons/colorIcon.png";
 import sizeIcon from "app/assets/icons/sizeIcon.png";
 import gridIcon from "app/assets/icons/gridIcon.png";
 import Image from "next/image";
+import Link from 'next/link';
 import {redirect} from "next/navigation";
 
 type Shape = {
@@ -255,9 +256,9 @@ export default function ArtBoard() {
         <main className="main-page">
             <nav className='nav_bar'>
                 <div className='bar_container'>
-                    <a href="/">
+                    <Link href="/">
                         <Image src={homeIcon} alt="homeIcon" width={20} height={20}/>
-                    </a>
+                    </Link>
                     <button>Tools</button>
                     <button>Export</button>
                 </div>
