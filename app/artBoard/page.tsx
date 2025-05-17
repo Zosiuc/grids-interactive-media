@@ -5,12 +5,15 @@ import {shapeOptions} from "@/app/shapes/Shapes"
 import {componentMap} from "@/app/shapes/Shapes";
 import {drawOptions} from "@/app/artBoard/util/draw";
 
-import terugIcon from "app/assets/icons/unset.png"
-import homeIcon from "app/assets/icons/home.png"
-import printIcon from "app/assets/icons/print.png"
-import exportPdf from "app/assets/icons/export-pdf-512.webp"
-import resetIcon from "app/assets/icons/trash.png"
-
+import terugIcon from "app/assets/icons/unset.png";
+import homeIcon from "app/assets/icons/homeButton.png";
+import printIcon from "app/assets/icons/print.png";
+import exportPdf from "app/assets/icons/export-pdf-512.webp";
+import resetIcon from "app/assets/icons/trash.png";
+import shapesIcon from "app/assets/icons/shapesIcon.png";
+import colorsIcon from "app/assets/icons/colorIcon.png";
+import sizeIcon from "app/assets/icons/sizeIcon.png";
+import gridIcon from "app/assets/icons/gridIcon.png";
 import Image from "next/image";
 import {redirect} from "next/navigation";
 
@@ -250,83 +253,71 @@ export default function ArtBoard() {
 
     return (
         <main className="main-page">
-
-            <nav
-                className="navigation-bar">
-                <div
-                    className="tools-section">
-                    <label className={'tools-title'}>Tools</label>
-                    <div
-                        className={'tools-container'}>
-
-                        <button
-                            className="tools-button"
-                            type="button"
-                            onClick={() => redirect(".")}>
-                            <Image src={homeIcon} alt={"home"} width={20} height={20}/>
-                        </button>
-                        <button
-                            className="tools-button"
-                            type="button" onClick={handleDownloadPDF}>
-                            <Image src={exportPdf} alt={"print"} width={20} height={20}/>
-                        </button>
-                        <button
-                            className="tools-button print-button"
-                            type="button" onClick={handlePrint}>
-                            <Image src={printIcon} alt={"print"} width={20} height={20}/>
-                        </button>
-                        <button
-                            className="tools-button"
-                            type="button"
-                            onClick={handleClearAll}>
-                            <Image src={resetIcon} alt={"reset"} width={20} height={20}/>
-                        </button>
-                        <button
-                            className="tools-button"
-                            type="button"
-                            onClick={handleUnset}>
-                            <Image src={terugIcon} alt={"unset"} width={20} height={20}/>
-                        </button>
-                    </div>
+            <nav className='nav_bar'>
+                <div className='bar_container'>
+                    <a href="/">
+                        <Image src={homeIcon} alt="homeIcon" width={20} height={20}/>
+                    </a>
+                    <button>Tools</button>
+                    <button>Export</button>
                 </div>
+            </nav>
 
-                <div
-                    className="drawing-tools">
-                    <section
-                        className={"shape-selection"}>
-                        <div className={"shape-container"}>
-                            <label className={'shape-title'}>Shape</label>
-                            <div className={'shape-items'}>
-                                {shapeOptions.map((option, index) => {
-                                    const ShapeComponent = componentMap[option.componentKey];
-                                    return (
-                                        <label key={option.id}
-                                               className={`cursor-pointer transition-all ${selected === option.id ? 'ring-1  ring-blue-500' : 'ring-2 ring-transparent '} rounded-xl p-1`}>
-                                            <input
-                                                type="radio"
-                                                name="shape"
-                                                value={option.id}
-                                                onChange={() => setSelected(option.id)}
-                                                className="hidden"
-                                            />
-                                            <div
-                                                key={index}
-                                                style={{fill: selectedColor, color: selectedColor}}
-                                            >
-                                                <ShapeComponent width={40} height={40}/>
-                                            </div>
-                                        </label>
-                                    )
-                                })}
-                            </div>
+            <article className='pag_container'>
+                <nav
+                className="side-bar">
+                    <div
+                        className="tools-section">
+                        <label className={'tools-title'}>Tools</label>
+                        <div
+                            className={'tools-container'}>
+
+                            <button
+                                className="tools-button"
+                                type="button"
+                                onClick={() => redirect(".")}>
+                                <Image src={homeIcon} alt={"home"} width={20} height={20}/>
+                            </button>
+                            <button
+                                className="tools-button"
+                                type="button" onClick={handleDownloadPDF}>
+                                <Image src={exportPdf} alt={"print"} width={20} height={20}/>
+                            </button>
+                            <button
+                                className="tools-button print-button"
+                                type="button" onClick={handlePrint}>
+                                <Image src={printIcon} alt={"print"} width={20} height={20}/>
+                            </button>
+                            <button
+                                className="tools-button"
+                                type="button"
+                                onClick={handleClearAll}>
+                                <Image src={resetIcon} alt={"reset"} width={20} height={20}/>
+                            </button>
+                            <button
+                                className="tools-button"
+                                type="button"
+                                onClick={handleUnset}>
+                                <Image src={terugIcon} alt={"unset"} width={20} height={20}/>
+                            </button>
                         </div>
-                        <div className={"draw-container"}>
-                            <label className={'draw-title'}>Draw</label>
-                                <div className={'draw-items'}>
-                                    {drawOptions.map((option, index) => {
+                    </div>
+
+                    <div
+                        className="drawing-tools">
+                            <label className={'shape-title'}>
+                                    <Image className="shapeIcon" src={shapesIcon} alt={'shapes'} width={0} height={0}/>
+                                    Shapes</label>
+                        <section
+                            className={"shape-selection"}>
+                                
+                            <div className={"shape-container"}>
+                                <div className={'shape-items'}>
+                                    {shapeOptions.map((option, index) => {
+                                        const ShapeComponent = componentMap[option.componentKey];
                                         return (
                                             <label key={option.id}
-                                                   className={`cursor-pointer transition-all ${selected === option.id ? 'ring-1  ring-blue-500' : 'ring-2 ring-transparent '} rounded-xl p-1`}>
+                                                className={`cursor-pointer transition-all ${selected === option.id ? 'ring-1  ring-blue-500' : 'ring-2 ring-transparent '} rounded-xl p-1`}>
                                                 <input
                                                     type="radio"
                                                     name="shape"
@@ -336,137 +327,184 @@ export default function ArtBoard() {
                                                 />
                                                 <div
                                                     key={index}
+                                                    style={{fill: selectedColor, color: selectedColor}}
                                                 >
-                                                    ... soon
+                                                    <ShapeComponent width={40} height={40}/>
                                                 </div>
                                             </label>
                                         )
                                     })}
                                 </div>
-                        </div>
-                    </section>
-                    <section className={"editor"}>
-                        <div className="size-container">
-                            <input
-                                type="range"
-                                min={20}
-                                max={200}
-                                step={5}
-                                value={selectedSize}
-                                onChange={(e) => {
-                                    setSelectedSize(Number(e.target.value));
-                                }
-                                }
-                                className="size-range"
-                            />
-                            <span className="text-sm">{selectedSize}px</span>
-                        </div>
-                        <div className="colors-container">
-                            <div className="colors">
-                                {colorOptions.map((color) => (
-                                    
-                                    <button
-                                        key={color}
-                                        className="color-button"
-                                        style={{
-                                            backgroundColor: color,
-                                            borderColor: selectedColor === color ? 'black' : 'transparent'
-                                        }}
-                                        onClick={() => setSelectedColor(color)}
-                                    />
-                                ))}
                             </div>
-                        </div>
-                    </section>
-
-                </div>
-
-            </nav>
-
-            <section className="artboard">
-
-                <div id={"print-section"} className="page relative w-[794px] h-[1123px] bg-white overflow-clip rounded-md shadow-lg"
-                     onClick={handleAddShape}>
-                    {/* Canvas achtergrond */}
-
-
-                    {/* Alle geplaatste shapes */}
-
-                    {shapes.map((shape, index) => {
-                        const ShapeComponent = componentMap[shape.componentKey];
-
-                        return (
-                            <div
-                                key={index}
-                                className="absolute group"
-                                style={{
-                                    top: shape.y,
-                                    left: shape.x,
-                                    color: shape.color,
-                                    fill: shape.color,
-                                    cursor: "pointer",
-
-                                }}
-                                onMouseDown={(e) => {
-                                    e.stopPropagation();
-                                    handleDragStart(e, index);
-                                }}
-
-
-                                onTouchStart={(e) => {
-                                    e.stopPropagation();
-                                    handleTouchStart(e, index);
-                                }}
-                                onClick={(e) => {
-                                    if (selected) {
-                                        e.stopPropagation();
-                                        setSelectedShapeIndex(index);
-                                    }
-
-                                }}
-                            >
-                                <ShapeComponent width={shape.size} height={shape.size}/>
-
-                                {selectedShapeIndex === index && (
-                                    <>
-                                        <div
-                                            className="absolute bg-blue-200 w-full h-full drop-shadow-xl opacity-25 bottom-0 right-0  cursor-se-resize "
-                                            onMouseDown={(e) => {
-                                                e.stopPropagation();
-                                                handleResizeStart(e, index)
-
+                            <div className={"draw-container"}>
+                                <label className={'draw-title'}>Draw</label>
+                                    <div className={'draw-items'}>
+                                        {drawOptions.map((option, index) => {
+                                            return (
+                                                <label key={option.id}
+                                                    className={`cursor-pointer transition-all ${selected === option.id ? 'ring-1  ring-blue-500' : 'ring-2 ring-transparent '} rounded-xl p-1`}>
+                                                    <input
+                                                        type="radio"
+                                                        name="shape"
+                                                        value={option.id}
+                                                        onChange={() => setSelected(option.id)}
+                                                        className="hidden"
+                                                    />
+                                                    <div
+                                                        key={index}
+                                                    >
+                                                        ... soon
+                                                    </div>
+                                                </label>
+                                            )
+                                        })}
+                                    </div>
+                            </div>
+                        </section>
+                        <section className={"editor"}>
+                            <div className="colors-container">
+                                <label>
+                                <Image className="colorsIcon" src={colorsIcon} alt={'colors'} width={0} height={0}/>
+                               Colors
+                               </label>
+                                <div className="colors">
+                                    {colorOptions.map((color) => (
+                                        
+                                        <button
+                                            key={color}
+                                            className="color-button"
+                                            style={{
+                                                backgroundColor: color,
+                                                borderColor: selectedColor === color ? 'black' : 'transparent'
                                             }}
-                                            onTouchStart={(e) => {
-                                                e.stopPropagation();
-                                                handleResizeTouchStart(e, index);
-                                            }}
+                                            onClick={() => setSelectedColor(color)}
                                         />
-                                       {/* <>
-                                             Rechts
-                                            <div
-                                                className="absolute w-2 h-full right-0 top-0 cursor-e-resize z-10"
-                                                onMouseDown={(e) => handleSideResizeStart(e, index, 'right')}/>
-                                             Links
-                                            <div
-                                                className="absolute w-2 h-full left-0 top-0 cursor-w-resize z-10"
-                                                onMouseDown={(e) => handleSideResizeStart(e, index, 'left')}/>
-                                             Onder
-                                            <div
-                                                className="absolute h-2 w-full bottom-0 left-0 cursor-s-resize z-10"
-                                                onMouseDown={(e) => handleSideResizeStart(e, index, 'bottom')}/>
-                                             Boven
-                                            <div
-                                                className="absolute h-2 w-full top-0 left-0 cursor-n-resize z-10"
-                                                onMouseDown={(e) => handleSideResizeStart(e, index, 'top')}/>
-                                        </>*/}
-                                    </>
-
-                                )}
+                                    ))}
+                                </div>
                             </div>
-                        );
-                    })}
-                </div>
-            </section>
+                            <div className='size'>
+                                <label>
+                                    <Image className="sizeIcon" src={sizeIcon} alt='size' width={0} height={0} />
+                                    Size</label>
+                                <div className="size-container">
+                                    <input
+                                        type="range"
+                                        min={20}
+                                        max={200}
+                                        step={5}
+                                        value={selectedSize}
+                                        onChange={(e) => {
+                                            setSelectedSize(Number(e.target.value));
+                                        }
+                                        }
+                                        className="size-range"
+                                    />
+                                    <span className="text-sm">{selectedSize}px</span>
+                                </div>
+                            </div>
+                            <div className='grid-container'>
+                                <label>
+                                    <Image className='gridIcon' src={gridIcon} alt={'grid'} width={0} height={0}/>
+                                    Grid
+                                </label>
+                                <label className='switch'>
+                                    <input type='checkbox' id='switcher'/>
+                                    <span className='slider'></span>
+                                </label>
+                            </div>
+                            
+                        </section>
+
+                    </div>
+
+                </nav>
+
+                <section className="artboard">
+
+                    <div id={"print-section"} className="page relative  bg-white overflow-clip rounded-md shadow-lg"
+                        onClick={handleAddShape}>
+                        {/* Canvas achtergrond */}
+
+
+                        {/* Alle geplaatste shapes */}
+
+                        {shapes.map((shape, index) => {
+                            const ShapeComponent = componentMap[shape.componentKey];
+
+                            return (
+                                <div
+                                    key={index}
+                                    className="absolute group"
+                                    style={{
+                                        top: shape.y,
+                                        left: shape.x,
+                                        color: shape.color,
+                                        fill: shape.color,
+                                        cursor: "pointer",
+
+                                    }}
+                                    onMouseDown={(e) => {
+                                        e.stopPropagation();
+                                        handleDragStart(e, index);
+                                    }}
+
+
+                                    onTouchStart={(e) => {
+                                        e.stopPropagation();
+                                        handleTouchStart(e, index);
+                                    }}
+                                    onClick={(e) => {
+                                        if (selected) {
+                                            e.stopPropagation();
+                                            setSelectedShapeIndex(index);
+                                        }
+
+                                    }}
+                                >
+                                    <ShapeComponent width={shape.size} height={shape.size}/>
+
+                                    {selectedShapeIndex === index && (
+                                        <>
+                                            <div
+                                                className="absolute bg-blue-200 w-full h-full drop-shadow-xl opacity-25 bottom-0 right-0  cursor-se-resize "
+                                                onMouseDown={(e) => {
+                                                    e.stopPropagation();
+                                                    handleResizeStart(e, index)
+
+                                                }}
+                                                onTouchStart={(e) => {
+                                                    e.stopPropagation();
+                                                    handleResizeTouchStart(e, index);
+                                                }}
+                                            />
+                                        {/* <>
+                                                Rechts
+                                                <div
+                                                    className="absolute w-2 h-full right-0 top-0 cursor-e-resize z-10"
+                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'right')}/>
+                                                Links
+                                                <div
+                                                    className="absolute w-2 h-full left-0 top-0 cursor-w-resize z-10"
+                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'left')}/>
+                                                Onder
+                                                <div
+                                                    className="absolute h-2 w-full bottom-0 left-0 cursor-s-resize z-10"
+                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'bottom')}/>
+                                                Boven
+                                                <div
+                                                    className="absolute h-2 w-full top-0 left-0 cursor-n-resize z-10"
+                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'top')}/>
+                                            </>*/}
+                                        </>
+
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </section>
+            </article>
+
         </main>
     );
 }
