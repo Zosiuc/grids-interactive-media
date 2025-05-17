@@ -9,6 +9,7 @@ import Ruitvorm from 'app/shapes/SVG/Ruitvorm.svg';
 import HalveCirkelOnderkant from 'app/shapes/SVG/Halve-cirkel-onderkant.svg';
 import Trapezium from 'app/shapes/SVG/Trapezium.svg';
 import Ster from 'app/shapes/SVG/Ster.svg';
+import Flower from 'app/shapes/SVG/Flower.svg'
 
 import {FC, SVGProps} from "react";
 type SVGComponent = FC<SVGProps<SVGSVGElement>>;
@@ -23,7 +24,8 @@ export const componentMap: Record<string, SVGComponent> = {
     Ruitvorm:Ruitvorm,
     HalveCirkelOnderkant:HalveCirkelOnderkant,
     Trapezium:Trapezium,
-    Ster:Ster
+    Ster:Ster,
+    Flower:Flower
 };
 
 export const shapeOptions: {
@@ -39,7 +41,8 @@ export const shapeOptions: {
     {id: 778, componentKey: "Ruitvorm"},
     {id: 812, componentKey: "HalveCirkelOnderkant"},
     {id: 998, componentKey: "Trapezium"},
-    {id: 104, componentKey: "Ster"}
+    {id: 104, componentKey: "Ster"},
+    {id: 666, componentKey: "Flower"}
 
 ];
 /*
