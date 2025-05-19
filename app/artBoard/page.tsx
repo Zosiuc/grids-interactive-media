@@ -414,9 +414,9 @@ export default function ArtBoard() {
 
                 </nav>
 
-                <section className="artboard">
+                <section className="artBoard">
 
-                    <div id={"print-section"} className="page relative  bg-white overflow-clip rounded-md shadow-lg"
+                    <div id={"print-section"} className="page work-space relative  bg-white overflow-clip rounded-md shadow-lg"
                         onClick={handleAddShape}>
                         {/* Canvas achtergrond */}
 
@@ -429,10 +429,12 @@ export default function ArtBoard() {
                             return (
                                 <div
                                     key={index}
-                                    className="absolute group max-w-fit"
+                                    className="absolute group "
                                     style={{
-                                        top: shape.y,
-                                        left: shape.x,
+                                        width: shape.size,
+                                        height: shape.size,
+                                        top: shape.y-(shape.size / 2),
+                                        left: shape.x-(shape.size / 2),
                                         color: shape.color,
                                         fill: shape.color,
                                         cursor: "pointer",
@@ -456,12 +458,16 @@ export default function ArtBoard() {
 
                                     }}
                                 >
-                                    <ShapeComponent width={shape.size} height={shape.size}/>
+                                    <ShapeComponent />
 
                                     {selectedShapeIndex === index && (
                                         <>
                                             <div
-                                                className="absolute bg-blue-200 w-full h-full drop-shadow-xl opacity-25 bottom-0 right-0  cursor-se-resize "
+                                                className="absolute bg-blue-200  drop-shadow-xl opacity-25 bottom-0 right-0  cursor-se-resize "
+                                                style={{
+                                                    width: shape.size,
+                                                    height: shape.size,
+                                                }}
                                                 onMouseDown={(e) => {
                                                     e.stopPropagation();
                                                     handleResizeStart(e, index)

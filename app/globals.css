@@ -6,11 +6,11 @@
 
 
 :root {
-  --background: rgba(74, 60, 44, 0.66);
-  --foreground: rgba(243, 222, 191, 0.53);
-  --bar: #070704;
-  --bar-text:white;
-  --section: rgba(219, 207, 207, 0.784);
+  --background: rgba(216, 128, 28, 0.66);
+  --foreground: rgba(133, 78, 22, 0.16);
+  --bar: #faf8f2;
+  --bar-text: #000;
+  --section: rgba(246, 237, 209, 0.98);
   --text:rgb(9, 0, 0);
 
 }
@@ -24,11 +24,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #535252;
-    --foreground: #89838387;
+    --background: rgba(71, 65, 65, 0.6);
+    --foreground: rgba(236, 231, 231, 0.16);
     --bar:black;
     --bar-text:white;
-    --section: rgba(219, 207, 207, 0.784);
+    --section: rgba(5, 5, 5, 0.13);
     --text:rgb(9, 0, 0);
   }
 }
@@ -63,6 +63,8 @@ body {
     flex-direction: column;
     gap: 4px;
     width: 100%;
+
+
     
     /* background-color: aquamarine; */
 
@@ -92,6 +94,8 @@ body {
       flex-direction: row;
       justify-content: center;
       gap: 7px;
+      height: 100%;
+
       .side-bar{
         display: flex;
         flex-direction: column;
@@ -99,7 +103,9 @@ body {
         gap: 8px;
         background-color: var(--foreground);
         border-radius: 15px;
-        width: 200px;
+        height:fit-content;
+        min-width: 80px;
+        max-width: 300px;
         padding: 2px;
         
         .tools-section{
@@ -110,8 +116,8 @@ body {
           align-items: center;
           border-radius: 15px;
           gap: 20px;
-          height: 80px;
-          padding:3px 20px;
+          height: fit-content;
+          padding:10px 20px;
 
           .tools-title{
             display: flex;
@@ -124,6 +130,7 @@ body {
             gap: 12px;
             flex-direction: row;
             flex-wrap: wrap;
+
           
             .tools-button:hover{
               transition: 0.3s ;
@@ -271,12 +278,12 @@ body {
 
         }
       }
-      .artboard{
+      .artBoard{
         display: flex;
-        div {
+        .work-space {
           display: flex;
-          background-color: white;
-          width: 73vw;
+          width: 72vw;
+          height: 94vh;
 
         }
       }
