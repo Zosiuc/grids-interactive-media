@@ -16,7 +16,7 @@ import sizeIcon from "app/assets/icons/sizeIcon.png";
 import gridIcon from "app/assets/icons/gridIcon.png";
 import Image from "next/image";
 import Link from 'next/link';
-import {redirect} from "next/navigation";
+
 
 type Shape = {
     x: number,
