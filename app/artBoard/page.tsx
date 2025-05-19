@@ -257,10 +257,10 @@ export default function ArtBoard() {
             <nav className='nav_bar'>
                 <div className='bar_container'>
                     <Link href="/">
-                        <Image src={homeIcon} alt="homeIcon" width={20} height={20}/>
+                        <Image src={homeIcon} alt="homeIcon" width={0} height={0}/>
                     </Link>
+                    <button>File</button>
                     <button>Tools</button>
-                    <button>Export</button>
                 </div>
             </nav>
 
@@ -273,12 +273,6 @@ export default function ArtBoard() {
                         <div
                             className={'tools-container'}>
 
-                            <button
-                                className="tools-button"
-                                type="button"
-                                onClick={() => redirect(".")}>
-                                <Image src={homeIcon} alt={"home"} width={20} height={20}/>
-                            </button>
                             <button
                                 className="tools-button"
                                 type="button" onClick={handleDownloadPDF}>
@@ -307,7 +301,7 @@ export default function ArtBoard() {
                     <div
                         className="drawing-tools">
                             <label className={'shape-title'}>
-                                    <Image className="shapeIcon" src={shapesIcon} alt={'shapes'} width={0} height={0}/>
+                                    <Image className="shapeIcon" src={shapesIcon} alt={'shapes'} width={20} height={20}/>
                                     Shapes</label>
                         <section
                             className={"shape-selection"}>
@@ -435,7 +429,7 @@ export default function ArtBoard() {
                             return (
                                 <div
                                     key={index}
-                                    className="absolute group"
+                                    className="absolute group max-w-fit"
                                     style={{
                                         top: shape.y,
                                         left: shape.x,

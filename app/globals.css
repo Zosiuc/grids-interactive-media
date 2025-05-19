@@ -6,9 +6,12 @@
 
 
 :root {
-  --background: #948e8e;
-  --foreground: #171717;
-  --my-color:rgb(255, 255, 255);
+  --background: rgba(74, 60, 44, 0.66);
+  --foreground: rgba(243, 222, 191, 0.53);
+  --bar: #070704;
+  --bar-text:white;
+  --section: rgba(219, 207, 207, 0.784);
+  --text:rgb(9, 0, 0);
 
 }
 
