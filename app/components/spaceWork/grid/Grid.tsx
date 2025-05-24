@@ -1,7 +1,5 @@
 import React from "react";
 import {componentMap} from "@/app/shapes/Shapes";
-import Image from "next/image";
-import rotateIcon from "@/app/assets/icons/unset.png";
 type Shape = {
     x: number,
     y: number,
