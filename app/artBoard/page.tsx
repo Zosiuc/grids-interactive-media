@@ -192,29 +192,37 @@ export default function ArtBoard() {
 
     const handleDownloadPDF = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
+        const grids = document.getElementById('grids');
+        if (grids) grids.style.display = 'none';
 
         const element = document.getElementById('print-section');
         if (!element) {
             alert("Kon het te exporteren element niet vinden.");
             return;
         }
-        window.stop()
 
-
-        const html2pdf = (await import('html2pdf.js')) ;
+        const html2pdf = (await import('html2pdf.js'));
 
         const opt = {
-            margin:       0,
-            filename:     'boruil.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
+            margin: 0,
+            filename: 'boruil.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
                 scale: 2,
-                useCORS: true // belangrijk voor afbeeldingen
+                useCORS: true
             },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            jsPDF: {
+                unit: 'in',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
-        html2pdf.default().set(opt).from(element).save();
+        await html2pdf.default().set(opt).from(element).save();
+
+        // Zet de grid terug
+        if (grids) grids.style.display = 'block';
     };
 
 
@@ -224,68 +232,13 @@ export default function ArtBoard() {
 
 
     useEffect(() => {
-
-
-        const handleMouseMove = (e: MouseEvent) => {
-            if (draggingIndex === null) return;
-
-            setShapes((prev) => {
-                const updated = [...prev];
-                updated[draggingIndex] = {
-                    ...updated[draggingIndex],
-                    x: e.clientX - dragOffset.x ,
-                    y: e.clientY - dragOffset.y ,
-                };
-                return updated;
-            });
-        };
-
-        const handleMouseUp = (e:MouseEvent) => {
-            e.stopPropagation();
-            setDraggingIndex(null);
-        };
-        /////////////////////////////
-
-        const handleTouchMove = (e: TouchEvent) => {
-            if (draggingIndex === null) return;
-            const touch = e.touches[0];
-
-            setShapes((prev) => {
-                const updated = [...prev];
-                updated[draggingIndex] = {
-                    ...updated[draggingIndex],
-                    x: touch.clientX - dragOffset.x,
-                    y: touch.clientY - dragOffset.y,
-                };
-                return updated;
-            });
-        };
-
-        const handleTouchEnd = () => {
-            setDraggingIndex(null);
-        };
-
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-        window.addEventListener("touchmove", handleTouchMove);
-        window.addEventListener("touchend", handleTouchEnd);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
-            window.removeEventListener("touchmove", handleTouchMove);
-            window.removeEventListener("touchend", handleTouchEnd);
-        };
-    }, [draggingIndex, dragOffset]);
-
-    useEffect(() => {
         const storedShapes = localStorage.getItem("canvasShapes");
         if(!storedShapes) return;
         const parsedShapes = JSON.parse(storedShapes);
         setShapes(parsedShapes)
 
     }, [])
+
 
 
     return (
@@ -301,11 +254,9 @@ export default function ArtBoard() {
 
                             if (selectedButton === 'file') {
                                 setSelectedButton(null);
-                                setToolsOnView(false);
                                 setFileOnView(false);
                             }else {
                                 setSelectedButton('file');
-                                setToolsOnView(false);
                                 setFileOnView(true);
                             }
                         }}
@@ -319,11 +270,9 @@ export default function ArtBoard() {
 
                             if (selectedButton === 'tools') {
                                 setSelectedButton(null);
-                                setFileOnView(false);
                                 setToolsOnView(false);
                             }else{
                             setSelectedButton('tools');
-                                setFileOnView(false);
                                 setToolsOnView(true);
                             }
                         }
@@ -343,11 +292,13 @@ export default function ArtBoard() {
                 </nav>
 
                 <section className="art-board">
+                    <div className="art-board-container">
                     { gridActive ?
-                        <Grid selected={selected} setSelectedShapeIndex={setSelectedShapeIndex} shapes={shapes} handleDragStart={handleDragStart} handleResizeStart={handleResizeStart} handleTouchStart={handleTouchStart} handleAddShape={ handleAddShape} handleResizeTouchStart={handleResizeTouchStart} selectedShapeIndex={selectedShapeIndex} handleRotateStart={handleRotateStart}/>
+                        <Grid selected={selected} setDraggingIndex={setDraggingIndex} draggingIndex={draggingIndex} dragOffset={dragOffset} setSelectedShapeIndex={setSelectedShapeIndex} shapes={shapes} handleDragStart={handleDragStart} handleResizeStart={handleResizeStart} handleTouchStart={handleTouchStart} selectedSize={selectedSize} setShapes={setShapes} selectedColor={selectedColor} handleResizeTouchStart={handleResizeTouchStart} selectedShapeIndex={selectedShapeIndex} handleRotateStart={handleRotateStart}/>
                         :
-                        <Freeform selected={selected} setSelectedShapeIndex={setSelectedShapeIndex} shapes={shapes} handleDragStart={handleDragStart} handleResizeStart={handleResizeStart} handleTouchStart={handleTouchStart} handleAddShape={ handleAddShape} handleResizeTouchStart={handleResizeTouchStart} selectedShapeIndex={selectedShapeIndex} handleRotateStart={handleRotateStart}/>
+                        <Freeform selected={selected} setShapes={setShapes} draggingIndex={ draggingIndex} dragOffset={dragOffset} setDraggingIndex={setDraggingIndex} setSelectedShapeIndex={setSelectedShapeIndex} shapes={shapes} handleDragStart={handleDragStart} handleResizeStart={handleResizeStart} handleTouchStart={handleTouchStart} handleAddShape={ handleAddShape} handleResizeTouchStart={handleResizeTouchStart} selectedShapeIndex={selectedShapeIndex} handleRotateStart={handleRotateStart}/>
                     }
+                    </div>
                 </section>
             </article>
 

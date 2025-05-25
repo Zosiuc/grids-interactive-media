@@ -1,5 +1,5 @@
-import React from "react";
-import {componentMap} from "@/app/shapes/Shapes";
+import React, {useEffect} from "react";
+import {componentMap, shapeOptions} from "@/app/shapes/Shapes";
 type Shape = {
     x: number,
     y: number,
@@ -10,8 +10,10 @@ type Shape = {
 }
 
 interface GridState {
-    handleAddShape:(e: React.MouseEvent<HTMLDivElement, MouseEvent> )=>void,
     shapes:Shape[],
+    selectedColor:string,
+    selectedSize:number,
+    setShapes: (shapes: (prev: Shape[]) => Shape[]) => void,
     handleDragStart:(e:React.MouseEvent<HTMLDivElement>, index:number)=>void,
     handleTouchStart:(e:React.TouchEvent<HTMLDivElement>, index:number)=>void,
     selected:number|null,
@@ -20,14 +22,114 @@ interface GridState {
     handleResizeStart:(e:React.MouseEvent<HTMLDivElement>, index:number)=>void,
     handleResizeTouchStart:(e:React.TouchEvent<HTMLDivElement>, index:number)=>void,
     handleRotateStart:(e:React.MouseEvent<HTMLDivElement>, index:number)=>void,
+    setDraggingIndex:(draggingIndex:number|null)=>void,
+    draggingIndex:number|null,
+    dragOffset:{x:number, y:number},
 }
+const snapToGrid = (x: number, y: number, gridSize: number = 20) => {
+    const snappedX = Math.round(x / gridSize) * gridSize;
+    const snappedY = Math.round(y / gridSize) * gridSize;
+    return { x: snappedX, y: snappedY };
+};
+
+// Controle of x en y een exact kruispunt zijn op het grid
+const isValidGridPoint = (x: number, y: number, gridSize: number = 20) => {
+    return x % gridSize === 0 && y % gridSize === 0;
+};
+
+const Grid:React.FC<GridState> = ({setDraggingIndex,draggingIndex,dragOffset, shapes,selectedColor, selectedSize, setShapes, handleResizeTouchStart, handleResizeStart, handleTouchStart, selectedShapeIndex, setSelectedShapeIndex, handleDragStart, selected,handleRotateStart}) => {
+
+    const [hoverCoords, setHoverCoords] = React.useState<{x: number, y: number} | null>(null);
 
 
-const Grid:React.FC<GridState> = ({handleAddShape, shapes, handleResizeTouchStart, handleResizeStart, handleTouchStart, selectedShapeIndex, setSelectedShapeIndex, handleDragStart, selected,handleRotateStart}) => {
+    const handleAddShape = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (selected === null) return alert("Selecteer een vorm eerst");
+
+        const rect = e.currentTarget.getBoundingClientRect();
+        const rawX = e.clientX - rect.left;
+        const rawY = e.clientY - rect.top;
+
+        const { x, y } = snapToGrid(rawX, rawY);
+
+        if (!isValidGridPoint(x, y)) return alert("Klik op een grid-kruispunt");
+
+        const selectedShape = shapeOptions.find((s) => s.id === selected);
+        if (!selectedShape) return;
+
+        setShapes((prev) => [
+            ...prev,
+            {
+                x,
+                y,
+                componentKey: selectedShape.componentKey,
+                color: selectedColor,
+                size: selectedSize,
+                rotation: 0,
+            },
+        ]);
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (draggingIndex === null) return;
+
+            setShapes((prev) => {
+                const updated = [...prev];
+                updated[draggingIndex] = {
+                    ...updated[draggingIndex],
+                    x: e.clientX - dragOffset.x ,
+                    y: e.clientY - dragOffset.y ,
+                };
+                return updated;
+            });
+        };
+
+
+        const handleMouseUp = () => {
+            if (draggingIndex === null) return;
+
+            setShapes((prev) =>
+                prev.map((shape, idx) => {
+                    if (idx !== draggingIndex) return shape;
+
+                    const { x, y } = snapToGrid(shape.x, shape.y);
+                    return { ...shape, x, y };
+                })
+            );
+
+            setDraggingIndex(null);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [draggingIndex, dragOffset, setShapes]);
+
+
 
     return (
         <div id={"print-section"} className="page work-space   relative  bg-white overflow-clip rounded-md shadow-lg"
-             onClick={handleAddShape}>
+             style={{
+                 width: '8.27in',
+                 height: '11.69in',
+                 position: 'relative',
+                 backgroundColor: 'white',
+                 overflow: 'hidden',
+             }}
+             onClick={handleAddShape}
+             onMouseMove={(e) => {
+                 const rect = e.currentTarget.getBoundingClientRect();
+                 const rawX = e.clientX - rect.left;
+                 const rawY = e.clientY - rect.top;
+                 const {x, y} = snapToGrid(rawX, rawY);
+                 setHoverCoords({x, y});
+             }}
+             onMouseLeave={() => setHoverCoords(null)}
+        >
 
             {shapes.map((shape, index) => {
                 const ShapeComponent = componentMap[shape.componentKey];
@@ -35,6 +137,7 @@ const Grid:React.FC<GridState> = ({handleAddShape, shapes, handleResizeTouchStar
                 return (
                     <div
                         key={index}
+                        id={"shape"}
                         className="absolute group z-10 "
                         style={{
                             width: shape.size,
@@ -150,14 +253,50 @@ const Grid:React.FC<GridState> = ({handleAddShape, shapes, handleResizeTouchStar
                     </div>
                 );
             })}
-            <svg className="grid-overlay" xmlns="http://www.w3.org/2000/svg">
+            <svg id={"grids"} className="grid-overlay absolute top-0 left-0 w-full h-full pointer-events-none"
+                 xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="lightgray" strokeWidth="0.5"/>
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="lightgray" strokeWidth="0.9"/>
                     </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#smallGrid)"/>
+
+                {hoverCoords && (
+                    <>
+                        <line
+                            x1={hoverCoords.x}
+                            y1={0}
+                            x2={hoverCoords.x}
+                            y2="100%"
+                            stroke="black"
+                            strokeOpacity={"35%"}
+                            strokeWidth="1"
+                        />
+                        <line
+                            x1={0}
+                            y1={hoverCoords.y}
+                            x2="100%"
+                            y2={hoverCoords.y}
+                            stroke="black"
+                            strokeOpacity={"35%"}
+                            strokeWidth="1"
+                        />
+                    </>
+                )}
             </svg>
+            {hoverCoords && (
+                <div
+                    className="absolute text-xs bg-black text-white px-2 py-1 opacity-75 rounded pointer-events-none"
+                    style={{
+                        top: hoverCoords.y + 5,
+                        left: hoverCoords.x + 5,
+                    }}
+                >
+                    x: {hoverCoords.x}, y: {hoverCoords.y}
+                </div>
+            )}
+
 
 
         </div>
