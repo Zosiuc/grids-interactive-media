@@ -22,7 +22,7 @@ type Shape = {
 
 
 export default function ArtBoard() {
-    const [gridActive , setGridActive] = useState<boolean>(false);
+    const [gridActive , setGridActive] = useState<boolean>(true);
     const [fileOnView, setFileOnView] = useState<boolean>(false);
     const [toolsOnView, setToolsOnView] = useState<boolean>(false);
     const [selectedButton, setSelectedButton] = useState<'file' | 'tools' | null>(null);

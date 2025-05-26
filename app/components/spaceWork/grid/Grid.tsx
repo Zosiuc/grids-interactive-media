@@ -120,7 +120,7 @@ const Grid:React.FC<GridState> = ({setDraggingIndex,draggingIndex,dragOffset, sh
                  backgroundColor: 'white',
                  overflow: 'hidden',
              }}
-             onClick={handleAddShape}
+             onMouseDown={handleAddShape}
              onMouseMove={(e) => {
                  const rect = e.currentTarget.getBoundingClientRect();
                  const rawX = e.clientX - rect.left;
@@ -169,62 +169,8 @@ const Grid:React.FC<GridState> = ({setDraggingIndex,draggingIndex,dragOffset, sh
 
                         }}
                     >
-                        <div
-                            className="rotate-handle"
-                            onMouseDown={(e) => handleRotateStart(e, index)}
-                            style={{
-                                position: 'absolute',
-                                top: -2,
-                                left: 8,
-                                transform: 'translateX(-50%)',
-                                width: shape.size / 4,
-                                height: shape.size / 4,
-                                cursor: 'grab',
-                            }}>
 
-                        </div>
-                        <div
-                            className="rotate-handle"
-                            onMouseDown={(e) => handleRotateStart(e, index)}
-                            style={{
-                                position: 'absolute',
-                                top: -2,
-                                right: -8,
-                                transform: 'translateX(-50%)',
-                                width: shape.size / 4,
-                                height: shape.size / 4,
-                                cursor: 'grab',
-                            }}>
 
-                        </div>
-                        <div
-                            className="rotate-handle"
-                            onMouseDown={(e) => handleRotateStart(e, index)}
-                            style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                left: 0,
-                                transform: 'translateX(-50%)',
-                                width: shape.size / 4,
-                                height: shape.size / 4,
-                                cursor: 'grab',
-                            }}>
-
-                        </div>
-                        <div
-                            className="rotate-handle"
-                            onMouseDown={(e) => handleRotateStart(e, index)}
-                            style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                right: -10,
-                                transform: 'translateX(-50%)',
-                                width: shape.size / 4,
-                                height: shape.size / 4,
-                                cursor: 'grab',
-                            }}>
-
-                        </div>
 
                         <ShapeComponent/>
 
@@ -246,6 +192,23 @@ const Grid:React.FC<GridState> = ({setDraggingIndex,draggingIndex,dragOffset, sh
                                         handleResizeTouchStart(e, index);
                                     }}
                                 />
+                                <div
+                                    className="rotate-handle"
+                                    onMouseDown={(e) => handleRotateStart(e, index)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: -10,
+                                        left: -10,
+                                        transform: 'translateX(-50%)',
+                                        width: shape.size / 4,
+                                        height: shape.size / 4,
+                                        backgroundColor: "gray",
+                                        opacity:"75%",
+                                        borderRadius: "45px 45px 0 45px ",
+                                        cursor: 'grab',
+                                    }}>
+
+                                </div>
 
                             </>
 

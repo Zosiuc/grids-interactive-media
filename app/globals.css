@@ -55,16 +55,20 @@
 
   #print-section {
     position: absolute;
-    left: -80px;
+    left: 0;
     top: 0;
-    width: 8.27in;
-    height: 11.69in;
+    width: 794px;
+    height: 1123px;
     box-shadow: none !important;
     overflow: visible;
     page-break-inside: avoid;
   }
   #grids{
-    display: none !important;
+    visibility: hidden;
+  }
+  @page {
+    size: A4;
+    margin: 0;
   }
 }
 
