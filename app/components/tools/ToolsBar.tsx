@@ -20,10 +20,12 @@ interface toolsBarProps {
     setSelectedColor:(color:string)=>void,
     selectedSize:number,
     setSelectedSize:(selectedSize:number)=>void,
+    afterResize:(newSize:number)=>void,
+    afterRefill:(newColor:string)=>void
 
 }
 
-const ToolsBar:React.FC<toolsBarProps> = ({ view,gridActive, setGridActive, selected, setSelected, selectedColor, setSelectedColor, selectedSize, setSelectedSize}) => {
+const ToolsBar:React.FC<toolsBarProps> = ({ view,gridActive, setGridActive, selected, setSelected, selectedColor, setSelectedColor, selectedSize, setSelectedSize, afterResize, afterRefill}) => {
 
     return (
         <div
@@ -100,7 +102,12 @@ const ToolsBar:React.FC<toolsBarProps> = ({ view,gridActive, setGridActive, sele
                                     backgroundColor: color,
                                     borderColor: selectedColor === color ? 'black' : 'transparent'
                                 }}
-                                onClick={() => setSelectedColor(color)}
+                                onClick={
+                                () => {
+                                    afterRefill(color);
+                                    setSelectedColor(color);
+                                }
+                            }
                             />
                         ))}
                     </div>
@@ -112,11 +119,12 @@ const ToolsBar:React.FC<toolsBarProps> = ({ view,gridActive, setGridActive, sele
                     <div className="size-container">
                         <input
                             type="range"
-                            min={20}
-                            max={200}
-                            step={5}
+                            min={10}
+                            max={1123}
+                            step={1}
                             value={selectedSize}
                             onChange={(e) => {
+                                afterResize(Number(e.target.value))
                                 setSelectedSize(Number(e.target.value));
                             }
                             }

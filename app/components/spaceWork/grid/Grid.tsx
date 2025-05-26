@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import {componentMap, shapeOptions} from "@/app/shapes/Shapes";
 type Shape = {
+    id:number,
     x: number,
     y: number,
     componentKey:string,
@@ -59,6 +60,7 @@ const Grid:React.FC<GridState> = ({setDraggingIndex,draggingIndex,dragOffset, sh
         setShapes((prev) => [
             ...prev,
             {
+                id:Math.random(),
                 x,
                 y,
                 componentKey: selectedShape.componentKey,

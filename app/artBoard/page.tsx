@@ -11,7 +11,9 @@ import Freeform from "@/app/components/spaceWork/freeform/Freeform";
 import Grid from "@/app/components/spaceWork/grid/Grid";
 
 
+
 type Shape = {
+    id:number,
     x: number,
     y: number,
     componentKey:string,
@@ -37,6 +39,11 @@ export default function ArtBoard() {
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({x: 20, y: 20});
 
+
+    const generatedShapId = () => {
+        return  Math.floor(Math.random() * 99999)
+
+    }
     const handleAddShape = (e: React.MouseEvent<HTMLDivElement, MouseEvent> ) => {
         if (selected === null) return alert("Please select a shape")
 
@@ -48,9 +55,10 @@ export default function ArtBoard() {
         if (!selectedShape) return;
 
         setShapes((prev) => [...prev, {
-            x, y, componentKey: selectedShape.componentKey, color: selectedColor, size:selectedSize, rotation: 0,
+           id:generatedShapId(), x, y, componentKey: selectedShape.componentKey, color: selectedColor, size:selectedSize, rotation: 0,
         }]);
         localStorage.setItem('canvasShapes', JSON.stringify(shapes));
+        console.log(shapes);
     }
 
     function handleUnset() {
@@ -61,6 +69,12 @@ export default function ArtBoard() {
     function handleClearAll() {
         setShapes([]);
         localStorage.removeItem('canvasShapes');
+    }
+    function handleDelete() {
+        if (selectedShapeIndex) {
+            setShapes((prevState) => prevState.toSpliced(selectedShapeIndex, 1));
+            localStorage.setItem('canvasShapes', JSON.stringify(shapes));
+        }
     }
 
 
@@ -101,6 +115,7 @@ export default function ArtBoard() {
     }
     function handleResizeTouchStart(e: React.TouchEvent<HTMLDivElement>, index: number) {
         e.stopPropagation();
+
         const touch = e.touches[0];
         const startSize = shapes[index].size;
         const startX = touch.clientX;
@@ -163,11 +178,11 @@ export default function ArtBoard() {
         const centerX = shape.x + shape.size / 2;
         const centerY = shape.y + shape.size / 2;
 
-        const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+        const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (360 / Math.PI);
         const initialRotation = shape.rotation || 0;
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
-            const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX) * (180 / Math.PI);
+            const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX) * (360 / Math.PI);
             const delta = currentAngle - startAngle;
 
             setShapes((prevShapes) => {
@@ -180,6 +195,8 @@ export default function ArtBoard() {
             });
         };
 
+
+
         const handleMouseUp = () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
@@ -189,6 +206,33 @@ export default function ArtBoard() {
         window.addEventListener("mouseup", handleMouseUp);
     }
     ////////////////////
+
+    const afterResize = (newSize:number) => {
+        if (selectedShapeIndex) {
+            setShapes((prevShapes) => {
+                const updated = [...prevShapes];
+                updated[selectedShapeIndex] = {
+                    ...updated[selectedShapeIndex],
+                    size: newSize
+
+                };
+                return updated;
+            });
+        }
+    }
+    const afterRefill = (newColor:string) => {
+        if (selectedShapeIndex) {
+            setShapes((prevShapes) => {
+                const updated = [...prevShapes];
+                updated[selectedShapeIndex] = {
+                    ...updated[selectedShapeIndex],
+                    color: newColor
+
+                };
+                return updated;
+            });
+        }
+    }
 
     const handleDownloadPDF = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -231,6 +275,8 @@ export default function ArtBoard() {
     function handlePrint() {
         window.print();
     }
+
+
 
 
     useEffect(() => {
@@ -288,8 +334,8 @@ export default function ArtBoard() {
             <article className='pag_container'>
                 <nav className={`${!fileOnView&&!toolsOnView ? `hidden` : `side-bar ` }`}>
 
-                    <FileBar view={fileOnView} handleDownloadPDF={handleDownloadPDF} handlePrint={handlePrint} handleClearAll={handleClearAll} handleUnset={handleUnset}/>
-                    <ToolsBar view={toolsOnView} gridActive={gridActive} setGridActive={setGridActive} selected={selected} setSelected={setSelected} selectedColor={selectedColor} setSelectedColor={setSelectedColor} selectedSize={selectedSize} setSelectedSize={setSelectedSize}/>
+                    <FileBar view={fileOnView} selectedShapeIndex={selectedShapeIndex} handleDownloadPDF={handleDownloadPDF} handlePrint={handlePrint} handleClearAll={handleClearAll} handleUnset={handleUnset} handleDelete={handleDelete}/>
+                    <ToolsBar view={toolsOnView} gridActive={gridActive} setGridActive={setGridActive} selected={selected} setSelected={setSelected} selectedColor={selectedColor} setSelectedColor={setSelectedColor} selectedSize={selectedSize} setSelectedSize={setSelectedSize} afterResize={afterResize} afterRefill={afterRefill}/>
 
                 </nav>
 

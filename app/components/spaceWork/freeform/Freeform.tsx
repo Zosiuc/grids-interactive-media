@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import {componentMap} from "@/app/shapes/Shapes";
 type Shape = {
+    id:number
     x: number,
     y: number,
     componentKey:string,

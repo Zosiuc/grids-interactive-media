@@ -1,19 +1,23 @@
 import Image from "next/image";
 import exportPdf from "@/app/assets/icons/export-pdf-512.webp";
 import printIcon from "@/app/assets/icons/print.png";
-import resetIcon from "@/app/assets/icons/trash.png";
+import resetIcon from "@/app/assets/icons/reset.png";
 import terugIcon from "@/app/assets/icons/unset.png";
+import deleteIcon from "@/app/assets/icons/trash.png";
+
 import React from "react";
 
 interface fileBarProps {
     view:boolean,
+    selectedShapeIndex:number|null,
     handleDownloadPDF:(e: React.MouseEvent<HTMLButtonElement>) =>void,
     handlePrint:() =>void,
     handleClearAll:() =>void,
-    handleUnset:() =>void
+    handleUnset:() =>void,
+    handleDelete:()=>void
 }
 
-const FileBar:React.FC<fileBarProps> = ({view, handleDownloadPDF, handlePrint, handleUnset, handleClearAll}) => {
+const FileBar:React.FC<fileBarProps> = ({view,selectedShapeIndex, handleDownloadPDF, handlePrint, handleUnset, handleClearAll,handleDelete}) => {
 
 
     return (
@@ -48,6 +52,16 @@ const FileBar:React.FC<fileBarProps> = ({view, handleDownloadPDF, handlePrint, h
                     <Image src={terugIcon} alt={"unset"} width={20} height={20}/>
                     <strong>Undo</strong>
                 </button>
+                {(selectedShapeIndex !== null && selectedShapeIndex >= 0) &&
+                <button
+                    className="file-button"
+                    type="button"
+                    onClick={handleDelete}>
+                    <Image src={deleteIcon} alt={"delete"} width={20} height={20}/>
+                    <strong>Delete</strong>
+                </button>
+                }
+
             </div>
         </div>
     )
