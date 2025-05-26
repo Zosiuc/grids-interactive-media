@@ -118,7 +118,7 @@ const Grid:React.FC<GridState> = ({setDraggingIndex,draggingIndex,dragOffset, sh
                  height: '11.69in',
                  position: 'relative',
                  backgroundColor: 'white',
-                 overflow: 'hidden',
+                 overflow: 'hidden'
              }}
              onMouseDown={handleAddShape}
              onMouseMove={(e) => {

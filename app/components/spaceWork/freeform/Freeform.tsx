@@ -86,6 +86,13 @@ const Freeform:React.FC<FreeformState> = ({draggingIndex,setShapes,dragOffset,se
     }, [draggingIndex, dragOffset]);
     return (
         <div id={"print-section"} className="page work-space relative  bg-white overflow-clip rounded-md shadow-lg"
+             style={{
+                 width: '8.27in',
+                 height: '11.69in',
+                 position: 'relative',
+                 backgroundColor: 'white',
+                 overflow: 'hidden'
+             }}
              onMouseDown={handleAddShape}>
             {/* Canvas achtergrond */}
 
