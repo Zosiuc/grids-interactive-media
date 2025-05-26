@@ -54,17 +54,17 @@
 
 
   #print-section {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 794px;
-    height: 1123px;
+    position: absolute !important;
+    left: 0!important;
+    top: 0!important;
+    width: 8.27in!important;
+    height: 11.69in!important;
     box-shadow: none !important;
-    overflow: visible;
-    page-break-inside: avoid;
+    overflow: hidden !important;
+    page-break-inside: avoid!important;
   }
   #grids{
-    visibility: hidden;
+    display: none!important;
   }
   @page {
     size: A4;

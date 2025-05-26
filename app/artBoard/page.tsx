@@ -205,6 +205,9 @@ export default function ArtBoard() {
 
         const opt = {
             margin: 0,
+            style:{
+                overflow: 'visible',
+            },
             filename: 'boruil.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
@@ -215,8 +218,7 @@ export default function ArtBoard() {
                 unit: 'in',
                 format: 'a4',
                 orientation: 'portrait'
-            },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            }
         };
 
         await html2pdf.default().set(opt).from(element).save();
