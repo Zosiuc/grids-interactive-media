@@ -2,20 +2,13 @@
 import React, {useEffect, useState} from 'react';
 import {colorOptions} from "@/app/artBoard/util/colors";
 import {shapeOptions} from "@/app/shapes/Shapes"
-import {componentMap} from "@/app/shapes/Shapes";
-import {drawOptions} from "@/app/artBoard/util/draw";
-
-import terugIcon from "app/assets/icons/unset.png";
 import homeIcon from "app/assets/icons/homeButton.png";
-import printIcon from "app/assets/icons/print.png";
-import exportPdf from "app/assets/icons/export-pdf-512.webp";
-import resetIcon from "app/assets/icons/trash.png";
-import shapesIcon from "app/assets/icons/shapesIcon.png";
-import colorsIcon from "app/assets/icons/colorIcon.png";
-import sizeIcon from "app/assets/icons/sizeIcon.png";
-import gridIcon from "app/assets/icons/gridIcon.png";
 import Image from "next/image";
 import Link from 'next/link';
+import FileBar from "@/app/components/file/FileBar";
+import ToolsBar from "@/app/components/tools/ToolsBar";
+import Freeform from "@/app/components/spaceWork/freeform/Freeform";
+import Grid from "@/app/components/spaceWork/grid/Grid";
 
 
 type Shape = {
@@ -24,11 +17,15 @@ type Shape = {
     componentKey:string,
     color: string,
     size: number,
+    rotation?: number;
 }
 
 
 export default function ArtBoard() {
-
+    const [gridActive , setGridActive] = useState<boolean>(true);
+    const [fileOnView, setFileOnView] = useState<boolean>(false);
+    const [toolsOnView, setToolsOnView] = useState<boolean>(false);
+    const [selectedButton, setSelectedButton] = useState<'file' | 'tools' | null>(null);
     const [shapes, setShapes] = useState<Shape[]>([]);
     const [selectedSize, setSelectedSize] = useState< number>(40);
     const [selectedColor, setSelectedColor] = useState<string>(colorOptions[0]);
@@ -51,7 +48,7 @@ export default function ArtBoard() {
         if (!selectedShape) return;
 
         setShapes((prev) => [...prev, {
-            x, y, componentKey: selectedShape.componentKey, color: selectedColor, size:selectedSize
+            x, y, componentKey: selectedShape.componentKey, color: selectedColor, size:selectedSize, rotation: 0,
         }]);
         localStorage.setItem('canvasShapes', JSON.stringify(shapes));
     }
@@ -93,6 +90,7 @@ export default function ArtBoard() {
         };
 
         const handleMouseUp = () => {
+
             setSelectedShapeIndex(null);
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
@@ -157,28 +155,74 @@ export default function ArtBoard() {
         setDragOffset({ x: offsetX, y: offsetY });
         setDraggingIndex(index);
     }
+    /////////////
 
-    const handleDownloadPDF = async () => {
+    function handleRotateStart(e: React.MouseEvent<HTMLDivElement>, index: number) {
+        e.stopPropagation();
+        const shape = shapes[index];
+        const centerX = shape.x + shape.size / 2;
+        const centerY = shape.y + shape.size / 2;
+
+        const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+        const initialRotation = shape.rotation || 0;
+
+        const handleMouseMove = (moveEvent: MouseEvent) => {
+            const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX) * (180 / Math.PI);
+            const delta = currentAngle - startAngle;
+
+            setShapes((prevShapes) => {
+                const updated = [...prevShapes];
+                updated[index] = {
+                    ...updated[index],
+                    rotation: (initialRotation + delta) % 360,
+                };
+                return updated;
+            });
+        };
+
+        const handleMouseUp = () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+    }
+    ////////////////////
+
+    const handleDownloadPDF = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        const grids = document.getElementById('grids');
+        if (grids) grids.style.display = 'none';
+
         const element = document.getElementById('print-section');
         if (!element) {
             alert("Kon het te exporteren element niet vinden.");
             return;
         }
 
-        const html2pdf = (await import('html2pdf.js')) ;
+        const html2pdf = (await import('html2pdf.js'));
 
         const opt = {
-            margin:       0,
-            filename:     'boruil.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
+            margin: 0,
+            filename: 'boruil.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
                 scale: 2,
-                useCORS: true // belangrijk voor afbeeldingen
+                useCORS: true
             },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            jsPDF: {
+                unit: 'in',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
-        html2pdf.default().set(opt).from(element).save();
+        await html2pdf.default().set(opt).from(element).save();
+
+        // Zet de grid terug
+        if (grids) grids.style.display = 'block';
     };
 
 
@@ -186,62 +230,6 @@ export default function ArtBoard() {
         window.print();
     }
 
-
-    useEffect(() => {
-
-
-        const handleMouseMove = (e: MouseEvent) => {
-            if (draggingIndex === null) return;
-
-            setShapes((prev) => {
-                const updated = [...prev];
-                updated[draggingIndex] = {
-                    ...updated[draggingIndex],
-                    x: e.clientX - dragOffset.x ,
-                    y: e.clientY - dragOffset.y ,
-                };
-                return updated;
-            });
-        };
-
-        const handleMouseUp = (e:MouseEvent) => {
-            e.stopPropagation();
-            setDraggingIndex(null);
-        };
-        /////////////////////////////
-
-        const handleTouchMove = (e: TouchEvent) => {
-            if (draggingIndex === null) return;
-            const touch = e.touches[0];
-
-            setShapes((prev) => {
-                const updated = [...prev];
-                updated[draggingIndex] = {
-                    ...updated[draggingIndex],
-                    x: touch.clientX - dragOffset.x,
-                    y: touch.clientY - dragOffset.y,
-                };
-                return updated;
-            });
-        };
-
-        const handleTouchEnd = () => {
-            setDraggingIndex(null);
-        };
-
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-        window.addEventListener("touchmove", handleTouchMove);
-        window.addEventListener("touchend", handleTouchEnd);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
-            window.removeEventListener("touchmove", handleTouchMove);
-            window.removeEventListener("touchend", handleTouchEnd);
-        };
-    }, [draggingIndex, dragOffset]);
 
     useEffect(() => {
         const storedShapes = localStorage.getItem("canvasShapes");
@@ -252,6 +240,7 @@ export default function ArtBoard() {
     }, [])
 
 
+
     return (
         <main className="main-page">
             <nav className='nav_bar'>
@@ -259,249 +248,56 @@ export default function ArtBoard() {
                     <Link href="/">
                         <Image src={homeIcon} alt="homeIcon" width={0} height={0}/>
                     </Link>
-                    <button>File</button>
-                    <button>Tools</button>
+                    <button
+                        className={selectedButton === 'file' ? 'bar_button selected' : 'bar_button'}
+                        onClick={() => {
+
+                            if (selectedButton === 'file') {
+                                setSelectedButton(null);
+                                setFileOnView(false);
+                            }else {
+                                setSelectedButton('file');
+                                setFileOnView(true);
+                            }
+                        }}
+                    >
+                        File
+                    </button>
+
+                    <button
+                        className={selectedButton === 'tools' ? 'bar_button selected' : 'bar_button'}
+                        onClick={() => {
+
+                            if (selectedButton === 'tools') {
+                                setSelectedButton(null);
+                                setToolsOnView(false);
+                            }else{
+                            setSelectedButton('tools');
+                                setToolsOnView(true);
+                            }
+                        }
+                        }
+                    >
+                        Tools
+                    </button>
                 </div>
             </nav>
 
             <article className='pag_container'>
-                <nav
-                className="side-bar">
-                    <div
-                        className="tools-section">
-                        <label className={'tools-title'}>Tools</label>
-                        <div
-                            className={'tools-container'}>
+                <nav className={`${!fileOnView&&!toolsOnView ? `hidden` : `side-bar ` }`}>
 
-                            <button
-                                className="tools-button"
-                                type="button" onClick={handleDownloadPDF}>
-                                <Image src={exportPdf} alt={"print"} width={20} height={20}/>
-                            </button>
-                            <button
-                                className="tools-button print-button"
-                                type="button" onClick={handlePrint}>
-                                <Image src={printIcon} alt={"print"} width={20} height={20}/>
-                            </button>
-                            <button
-                                className="tools-button"
-                                type="button"
-                                onClick={handleClearAll}>
-                                <Image src={resetIcon} alt={"reset"} width={20} height={20}/>
-                            </button>
-                            <button
-                                className="tools-button"
-                                type="button"
-                                onClick={handleUnset}>
-                                <Image src={terugIcon} alt={"unset"} width={20} height={20}/>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
-                        className="drawing-tools">
-                            <label className={'shape-title'}>
-                                    <Image className="shapeIcon" src={shapesIcon} alt={'shapes'} width={20} height={20}/>
-                                    Shapes</label>
-                        <section
-                            className={"shape-selection"}>
-                                
-                            <div className={"shape-container"}>
-                                <div className={'shape-items'}>
-                                    {shapeOptions.map((option, index) => {
-                                        const ShapeComponent = componentMap[option.componentKey];
-                                        return (
-                                            <label key={option.id}
-                                                className={`cursor-pointer transition-all ${selected === option.id ? 'ring-1  ring-blue-500' : 'ring-2 ring-transparent '} rounded-xl p-1`}>
-                                                <input
-                                                    type="radio"
-                                                    name="shape"
-                                                    value={option.id}
-                                                    onChange={() => setSelected(option.id)}
-                                                    className="hidden"
-                                                />
-                                                <div
-                                                    key={index}
-                                                    style={{fill: selectedColor, color: selectedColor}}
-                                                >
-                                                    <ShapeComponent width={40} height={40}/>
-                                                </div>
-                                            </label>
-                                        )
-                                    })}
-                                </div>
-                            </div>
-                            <div className={"draw-container"}>
-                                <label className={'draw-title'}>Draw</label>
-                                    <div className={'draw-items'}>
-                                        {drawOptions.map((option, index) => {
-                                            return (
-                                                <label key={option.id}
-                                                    className={`cursor-pointer transition-all ${selected === option.id ? 'ring-1  ring-blue-500' : 'ring-2 ring-transparent '} rounded-xl p-1`}>
-                                                    <input
-                                                        type="radio"
-                                                        name="shape"
-                                                        value={option.id}
-                                                        onChange={() => setSelected(option.id)}
-                                                        className="hidden"
-                                                    />
-                                                    <div
-                                                        key={index}
-                                                    >
-                                                        ... soon
-                                                    </div>
-                                                </label>
-                                            )
-                                        })}
-                                    </div>
-                            </div>
-                        </section>
-                        <section className={"editor"}>
-                            <div className="colors-container">
-                                <label>
-                                <Image className="colorsIcon" src={colorsIcon} alt={'colors'} width={0} height={0}/>
-                               Colors
-                               </label>
-                                <div className="colors">
-                                    {colorOptions.map((color) => (
-                                        
-                                        <button
-                                            key={color}
-                                            className="color-button"
-                                            style={{
-                                                backgroundColor: color,
-                                                borderColor: selectedColor === color ? 'black' : 'transparent'
-                                            }}
-                                            onClick={() => setSelectedColor(color)}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                            <div className='size'>
-                                <label>
-                                    <Image className="sizeIcon" src={sizeIcon} alt='size' width={0} height={0} />
-                                    Size</label>
-                                <div className="size-container">
-                                    <input
-                                        type="range"
-                                        min={20}
-                                        max={200}
-                                        step={5}
-                                        value={selectedSize}
-                                        onChange={(e) => {
-                                            setSelectedSize(Number(e.target.value));
-                                        }
-                                        }
-                                        className="size-range"
-                                    />
-                                    <span className="text-sm">{selectedSize}px</span>
-                                </div>
-                            </div>
-                            <div className='grid-container'>
-                                <label>
-                                    <Image className='gridIcon' src={gridIcon} alt={'grid'} width={0} height={0}/>
-                                    Grid
-                                </label>
-                                <label className='switch'>
-                                    <input type='checkbox' id='switcher'/>
-                                    <span className='slider'></span>
-                                </label>
-                            </div>
-                            
-                        </section>
-
-                    </div>
+                    <FileBar view={fileOnView} handleDownloadPDF={handleDownloadPDF} handlePrint={handlePrint} handleClearAll={handleClearAll} handleUnset={handleUnset}/>
+                    <ToolsBar view={toolsOnView} gridActive={gridActive} setGridActive={setGridActive} selected={selected} setSelected={setSelected} selectedColor={selectedColor} setSelectedColor={setSelectedColor} selectedSize={selectedSize} setSelectedSize={setSelectedSize}/>
 
                 </nav>
 
-                <section className="artBoard">
-
-                    <div id={"print-section"} className="page work-space relative  bg-white overflow-clip rounded-md shadow-lg"
-                        onClick={handleAddShape}>
-                        {/* Canvas achtergrond */}
-
-
-                        {/* Alle geplaatste shapes */}
-
-                        {shapes.map((shape, index) => {
-                            const ShapeComponent = componentMap[shape.componentKey];
-
-                            return (
-                                <div
-                                    key={index}
-                                    className="absolute group "
-                                    style={{
-                                        width: shape.size,
-                                        height: shape.size,
-                                        top: shape.y-(shape.size / 2),
-                                        left: shape.x-(shape.size / 2),
-                                        color: shape.color,
-                                        fill: shape.color,
-                                        cursor: "pointer",
-
-                                    }}
-                                    onMouseDown={(e) => {
-                                        e.stopPropagation();
-                                        handleDragStart(e, index);
-                                    }}
-
-
-                                    onTouchStart={(e) => {
-                                        e.stopPropagation();
-                                        handleTouchStart(e, index);
-                                    }}
-                                    onClick={(e) => {
-                                        if (selected) {
-                                            e.stopPropagation();
-                                            setSelectedShapeIndex(index);
-                                        }
-
-                                    }}
-                                >
-                                    <ShapeComponent />
-
-                                    {selectedShapeIndex === index && (
-                                        <>
-                                            <div
-                                                className="absolute bg-blue-200  drop-shadow-xl opacity-25 bottom-0 right-0  cursor-se-resize "
-                                                style={{
-                                                    width: shape.size,
-                                                    height: shape.size,
-                                                }}
-                                                onMouseDown={(e) => {
-                                                    e.stopPropagation();
-                                                    handleResizeStart(e, index)
-
-                                                }}
-                                                onTouchStart={(e) => {
-                                                    e.stopPropagation();
-                                                    handleResizeTouchStart(e, index);
-                                                }}
-                                            />
-                                        {/* <>
-                                                Rechts
-                                                <div
-                                                    className="absolute w-2 h-full right-0 top-0 cursor-e-resize z-10"
-                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'right')}/>
-                                                Links
-                                                <div
-                                                    className="absolute w-2 h-full left-0 top-0 cursor-w-resize z-10"
-                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'left')}/>
-                                                Onder
-                                                <div
-                                                    className="absolute h-2 w-full bottom-0 left-0 cursor-s-resize z-10"
-                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'bottom')}/>
-                                                Boven
-                                                <div
-                                                    className="absolute h-2 w-full top-0 left-0 cursor-n-resize z-10"
-                                                    onMouseDown={(e) => handleSideResizeStart(e, index, 'top')}/>
-                                            </>*/}
-                                        </>
-
-                                    )}
-                                </div>
-                            );
-                        })}
+                <section className="art-board">
+                    <div className="art-board-container">
+                    { gridActive ?
+                        <Grid selected={selected} setDraggingIndex={setDraggingIndex} draggingIndex={draggingIndex} dragOffset={dragOffset} setSelectedShapeIndex={setSelectedShapeIndex} shapes={shapes} handleDragStart={handleDragStart} handleResizeStart={handleResizeStart} handleTouchStart={handleTouchStart} selectedSize={selectedSize} setShapes={setShapes} selectedColor={selectedColor} handleResizeTouchStart={handleResizeTouchStart} selectedShapeIndex={selectedShapeIndex} handleRotateStart={handleRotateStart}/>
+                        :
+                        <Freeform selected={selected} setShapes={setShapes} draggingIndex={ draggingIndex} dragOffset={dragOffset} setDraggingIndex={setDraggingIndex} setSelectedShapeIndex={setSelectedShapeIndex} shapes={shapes} handleDragStart={handleDragStart} handleResizeStart={handleResizeStart} handleTouchStart={handleTouchStart} handleAddShape={ handleAddShape} handleResizeTouchStart={handleResizeTouchStart} selectedShapeIndex={selectedShapeIndex} handleRotateStart={handleRotateStart}/>
+                    }
                     </div>
                 </section>
             </article>
